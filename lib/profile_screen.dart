@@ -38,7 +38,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Account'),
+        title: Text(
+          'Account',
+          style: TextStyle(
+            fontWeight: FontWeight.bold, // Make the text bold
+          ),
+        ),
+        backgroundColor:
+            Color.fromARGB(255, 170, 226, 254), // Custom blue color
       ),
       body: Column(
         children: [
@@ -55,7 +62,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           CircleAvatar(
                             radius: 40,
                             backgroundImage: AssetImage(
-                                'assets/profile.jpg'), // Add your profile image to assets
+                                'assets/profilkosong.jpg'), // Add your profile image to assets
                           ),
                           SizedBox(height: 8),
                           Text(
@@ -69,166 +76,26 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ),
                     ),
                     SizedBox(height: 20),
-                    Card(
-                      elevation: 4,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: Padding(
-                        padding:
-                            const EdgeInsets.all(8.0), // Reduce the padding
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              children: [
-                                CircleAvatar(
-                                  radius: 30, // Reduce the size of the avatar
-                                  backgroundImage: AssetImage(
-                                      'assets/profile.jpg'), // Add your profile image to assets
-                                ),
-                                SizedBox(
-                                    width:
-                                        8), // Reduce the space between avatar and text
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        'Ketua Kelompok',
-                                        style: TextStyle(
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.bold),
-                                      ),
-                                      SizedBox(
-                                          height:
-                                              4), // Reduce the space between lines
-                                      Text(
-                                        'Nama: Nurul Hidayatul Hasanah',
-                                        style: TextStyle(
-                                            fontSize:
-                                                12), // Reduce the font size
-                                      ),
-                                      Text(
-                                        'NPM: 22082010013',
-                                        style: TextStyle(
-                                            fontSize:
-                                                12), // Reduce the font size
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                TextButton(
-                                  onPressed: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) =>
-                                            DetailedProfileScreen(
-                                          name: 'Nurul Hidayatul Hasanah',
-                                          npm: '22082010013',
-                                          email: 'Nurulhidayatul@gmail.com',
-                                          phoneNumber: '085769883212',
-                                          address: 'Asarama Putri UPN',
-                                          githubUrl:
-                                              'https://github.com/nurulhdyhh',
-                                        ),
-                                      ),
-                                    );
-                                  },
-                                  child: Text(
-                                    'Lihat Detail',
-                                    style: TextStyle(
-                                        fontSize: 12), // Reduce the font size
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
+                    ProfileCard(
+                      role: 'Ketua Kelompok',
+                      name: 'Nurul Hidayatul Hasanah',
+                      npm: '22082010013',
+                      email: 'nurhidyh950@gmail.com',
+                      phoneNumber: '085769883212',
+                      address: 'Asarama Putri UPN',
+                      githubUrl: 'https://github.com/nurulhdyhh',
+                      imagePath: 'assets/fotonurul.jpg',
                     ),
                     SizedBox(height: 10),
-                    Card(
-                      elevation: 4,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: Padding(
-                        padding:
-                            const EdgeInsets.all(8.0), // Reduce the padding
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              children: [
-                                CircleAvatar(
-                                  radius: 30, // Reduce the size of the avatar
-                                  backgroundImage: AssetImage(
-                                      'assets/profile.jpg'), // Add your profile image to assets
-                                ),
-                                SizedBox(
-                                    width:
-                                        8), // Reduce the space between avatar and text
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        'Anggota Kelompok',
-                                        style: TextStyle(
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.bold),
-                                      ),
-                                      SizedBox(
-                                          height:
-                                              4), // Reduce the space between lines
-                                      Text(
-                                        'Nama: Filda Dwi Meirina',
-                                        style: TextStyle(
-                                            fontSize:
-                                                12), // Reduce the font size
-                                      ),
-                                      Text(
-                                        'NPM: 22082010025',
-                                        style: TextStyle(
-                                            fontSize:
-                                                12), // Reduce the font size
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                TextButton(
-                                  onPressed: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) =>
-                                            DetailedProfileScreen(
-                                          name: 'Filda Dwi Meirina',
-                                          npm: '22082010025',
-                                          email: 'fildadwimeirina@gmail.com',
-                                          phoneNumber: '085278654312',
-                                          address: 'Perum IKIP Blok A-14',
-                                          githubUrl:
-                                              'https://github.com/Anndafildaa',
-                                        ),
-                                      ),
-                                    );
-                                  },
-                                  child: Text(
-                                    'Lihat Detail',
-                                    style: TextStyle(
-                                        fontSize: 12), // Reduce the font size
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
+                    ProfileCard(
+                      role: 'Anggota Kelompok',
+                      name: 'Filda Dwi Meirina',
+                      npm: '22082010025',
+                      email: 'fildadwimeirina18@gmail.com',
+                      phoneNumber: '085278654312',
+                      address: 'Perum IKIP Blok A-14',
+                      githubUrl: 'https://github.com/Anndafildaa',
+                      imagePath: 'assets/fotofilda.jpg',
                     ),
                   ],
                 ),
@@ -298,6 +165,103 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class ProfileCard extends StatelessWidget {
+  final String role;
+  final String name;
+  final String npm;
+  final String email;
+  final String phoneNumber;
+  final String address;
+  final String githubUrl;
+  final String imagePath;
+
+  ProfileCard({
+    required this.role,
+    required this.name,
+    required this.npm,
+    required this.email,
+    required this.phoneNumber,
+    required this.address,
+    required this.githubUrl,
+    required this.imagePath,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      elevation: 4,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(8),
+      ),
+      color: Colors.blue.shade50, // Light blue background color for the card
+      child: Padding(
+        padding: const EdgeInsets.all(8.0), // Reduce the padding
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                CircleAvatar(
+                  radius: 30, // Reduce the size of the avatar
+                  backgroundImage:
+                      AssetImage(imagePath), // Use the passed image path
+                ),
+                SizedBox(width: 8), // Reduce the space between avatar and text
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        role,
+                        style: TextStyle(
+                            fontSize: 14, fontWeight: FontWeight.bold),
+                      ),
+                      SizedBox(height: 4), // Reduce the space between lines
+                      Text(
+                        'Nama: $name',
+                        style: TextStyle(fontSize: 12), // Reduce the font size
+                      ),
+                      Text(
+                        'NPM: $npm',
+                        style: TextStyle(fontSize: 12), // Reduce the font size
+                      ),
+                    ],
+                  ),
+                ),
+                TextButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => DetailedProfileScreen(
+                          name: name,
+                          npm: npm,
+                          email: email,
+                          phoneNumber: phoneNumber,
+                          address: address,
+                          githubUrl: githubUrl,
+                          imagePath: imagePath, // Pass the image path
+                        ),
+                      ),
+                    );
+                  },
+                  child: Text(
+                    'Lihat Detail',
+                    style: TextStyle(
+                      fontSize: 12, // Reduce the font size
+                      color: Colors.blue.shade900, // Dark blue color
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }

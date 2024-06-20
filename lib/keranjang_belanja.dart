@@ -2,76 +2,113 @@ import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutterdemo/detail_screen.dart';
 import 'package:flutterdemo/main.dart';
-// ignore: unused_import
-import 'keranjang_belanja.dart';
 
-class ShoppingCartScreen extends StatelessWidget {
+class ShoppingCartScreen extends StatefulWidget {
+  @override
+  _ShoppingCartScreenState createState() => _ShoppingCartScreenState();
+}
+
+class _ShoppingCartScreenState extends State<ShoppingCartScreen> {
   final DatabaseReference databaseReference =
       FirebaseDatabase.instance.ref().child('orders');
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Keranjang'),
-        actions: [
-          IconButton(
-            icon: Icon(Icons.add),
-            onPressed: () {
-              Navigator.pushNamed(context, '/add-to-cart');
-            },
-          ),
-        ],
-      ),
-      body: ListView.builder(
-        itemCount: cartItems.length,
-        itemBuilder: (context, index) {
-          final item = cartItems[index];
-          return Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Card(
-              child: ListTile(
-                leading: Icon(Icons.local_laundry_service),
-                title: Text(item.laundryOption),
-                subtitle: Text('${item.kg} KG'),
-                trailing: Text('Rp ${item.price.toStringAsFixed(0)}'),
-              ),
-            ),
-          );
-        },
-      ),
-      bottomNavigationBar: _buildBottomNavigationBar(context),
-    );
-  }
-
-  Widget _buildBottomNavigationBar(BuildContext context) {
     double totalAmount = cartItems.fold(0.0, (sum, item) => sum + item.price);
     double deliveryCharge = 7000;
     double totalPayable = totalAmount + deliveryCharge;
 
-    return Padding(
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Keranjang'),
+        backgroundColor: Colors.lightBlue[100],
+      ),
+      body: Column(
+        children: [
+          Expanded(
+            child: ListView.builder(
+              itemCount: cartItems.length,
+              itemBuilder: (context, index) {
+                final item = cartItems[index];
+                return Padding(
+                  padding: const EdgeInsets.symmetric(
+                      vertical: 4.0, horizontal: 16.0),
+                  child: Card(
+                    elevation: 2,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: ListTile(
+                      leading: Icon(Icons.local_laundry_service,
+                          color: Colors.lightBlue),
+                      title: Text(item.laundryOption),
+                      subtitle: Text('${item.kg} KG'),
+                      trailing: Text('Rp ${item.price.toStringAsFixed(0)}'),
+                    ),
+                  ),
+                );
+              },
+            ),
+          ),
+        ],
+      ),
+      bottomSheet:
+          _buildBottomSheet(context, totalAmount, deliveryCharge, totalPayable),
+    );
+  }
+
+  Widget _buildBottomSheet(BuildContext context, double totalAmount,
+      double deliveryCharge, double totalPayable) {
+    return Container(
+      color: Colors.white,
       padding: const EdgeInsets.all(16.0),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
-          Text('Total: Rp ${totalAmount.toStringAsFixed(0)}'),
-          Text('Biaya Pengiriman: Rp ${deliveryCharge.toStringAsFixed(0)}'),
-          Text('Total: Rp ${totalPayable.toStringAsFixed(0)}'),
+          Text(
+            'Total: Rp ${totalAmount.toStringAsFixed(0)}',
+            style: TextStyle(
+              color: Colors.black,
+              fontWeight: FontWeight.bold,
+              fontSize: 16,
+            ),
+          ),
+          Text(
+            'Biaya Pengiriman: Rp ${deliveryCharge.toStringAsFixed(0)}',
+            style: TextStyle(
+              color: Colors.black,
+              fontSize: 16,
+            ),
+          ),
+          SizedBox(height: 8.0),
+          Text(
+            'Total: Rp ${totalPayable.toStringAsFixed(0)}',
+            style: TextStyle(
+              color: Colors.red,
+              fontWeight: FontWeight.bold,
+              fontSize: 18,
+            ),
+          ),
+          SizedBox(height: 16.0),
           ElevatedButton(
             onPressed: () {
-              print("Button pressed");
               if (cartItems.isEmpty) {
-                print("Cart is empty");
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(content: Text('Keranjang belanja kosong')),
                 );
               } else {
-                print("Cart has items, placing order...");
                 _placeOrder(context);
               }
             },
-            child: Text('Continue'),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.lightBlue, // Background color
+              padding: EdgeInsets.symmetric(vertical: 16.0),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+            ),
+            child: Text('Continue', style: TextStyle(fontSize: 16)),
           ),
         ],
       ),
@@ -79,12 +116,12 @@ class ShoppingCartScreen extends StatelessWidget {
   }
 
   void _placeOrder(BuildContext context) {
-    double totalAmount = cartItems.fold(
-      0.0,
-      (sum, item) => sum + item.price,
-    );
+    double totalAmount = cartItems.fold(0.0, (sum, item) => sum + item.price);
     double deliveryCharge = 7000;
     double totalPayable = totalAmount + deliveryCharge;
+
+    // Hitung total berat (jumlah KG)
+    int totalKg = cartItems.fold(0, (sum, item) => sum + item.kg);
 
     Map<String, dynamic> orderData = {
       'items': cartItems
@@ -99,15 +136,15 @@ class ShoppingCartScreen extends StatelessWidget {
       'totalPayable': totalPayable,
       'status': 'Queue',
       'timestamp': DateTime.now().toIso8601String(),
+      'totalKg': totalKg, // Tambahkan total berat ke orderData
     };
 
-    print("Order data: $orderData");
-
     databaseReference.push().set(orderData).then((_) {
-      cartItems.clear(); // Membersihkan keranjang setelah berhasil memesan
+      setState(() {
+        cartItems.clear(); // Membersihkan keranjang setelah berhasil memesan
+      });
       _showOrderSuccessDialog(context);
     }).catchError((error) {
-      print("Failed to save order: $error");
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Failed to place order. Please try again.'),

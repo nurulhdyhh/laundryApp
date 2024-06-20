@@ -19,13 +19,14 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutterdemo/login_screen.dart';
 import 'user_home_screen.dart';
-import 'admin_home_screen.dart'; // Halaman Admin
+import 'admin_home_screen.dart';
 import 'package:flutterdemo/keranjang_belanja.dart';
 import 'profile_screen.dart';
+import 'order_item.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
+  await Firebase.initializeApp(); // Inisialisasi Firebase
   runApp(const MyApp());
 }
 
@@ -40,8 +41,8 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'D’Oembah',
       theme: ThemeData(
-        primarySwatch: Colors.teal,
-        hintColor: Colors.lightGreen,
+        primarySwatch: Colors.blue,
+        hintColor: const Color.fromARGB(255, 107, 116, 122),
         scaffoldBackgroundColor: Colors.white,
         inputDecorationTheme: InputDecorationTheme(
           filled: true,
@@ -51,17 +52,17 @@ class MyApp extends StatelessWidget {
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10),
-            borderSide: BorderSide(
-              color: Colors.teal,
+            borderSide: const BorderSide(
+              color: Color.fromARGB(255, 102, 182, 213),
               width: 2,
             ),
           ),
-          labelStyle: TextStyle(
-            color: Colors.teal,
+          labelStyle: const TextStyle(
+            color: Color.fromARGB(255, 102, 182, 213),
           ),
         ),
         buttonTheme: ButtonThemeData(
-          buttonColor: Colors.teal,
+          buttonColor: const Color.fromARGB(255, 102, 182, 213),
           textTheme: ButtonTextTheme.primary,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10),
@@ -351,64 +352,68 @@ class _PromoSectionState extends State<PromoSection> {
           });
         },
         itemBuilder: (context, index) {
-          return Container(
-            decoration: BoxDecoration(
-              image: DecorationImage(
-                image: AssetImage(promoImages[index]),
-                fit: BoxFit.cover,
-              ),
-              borderRadius: BorderRadius.circular(16),
-            ),
+          return Padding(
+            padding: const EdgeInsets.symmetric(
+                horizontal: 8), // Add padding for spacing
             child: Container(
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(16),
-                gradient: LinearGradient(
-                  colors: [Colors.black54, Colors.transparent],
-                  begin: Alignment.bottomCenter,
-                  end: Alignment.topCenter,
+                image: DecorationImage(
+                  image: AssetImage(promoImages[index]),
+                  fit: BoxFit.cover,
                 ),
+                borderRadius: BorderRadius.circular(16),
               ),
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Align(
-                  alignment: Alignment.bottomLeft,
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        promoNames[index],
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
+              child: Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(16),
+                  gradient: const LinearGradient(
+                    colors: [Colors.black54, Colors.transparent],
+                    begin: Alignment.bottomCenter,
+                    end: Alignment.topCenter,
+                  ),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Align(
+                    alignment: Alignment.bottomLeft,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          promoNames[index],
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
-                      ),
-                      const SizedBox(height: 4),
-                      Row(
-                        children: [
-                          Text(
-                            promoPrices[index],
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontSize: 14,
-                              decoration: TextDecoration.lineThrough,
-                              decorationColor: Colors.red,
-                              decorationThickness: 2,
+                        const SizedBox(height: 4),
+                        Row(
+                          children: [
+                            Text(
+                              promoPrices[index],
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 14,
+                                decoration: TextDecoration.lineThrough,
+                                decorationColor: Colors.red,
+                                decorationThickness: 2,
+                              ),
                             ),
-                          ),
-                          const SizedBox(width: 4),
-                          Text(
-                            promoDiscountPrices[index],
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontSize: 14,
-                              fontWeight: FontWeight.bold,
+                            const SizedBox(width: 4),
+                            Text(
+                              promoDiscountPrices[index],
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
-                          ),
-                        ],
-                      ),
-                    ],
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
@@ -441,9 +446,9 @@ class LaundryCard extends StatelessWidget {
   Color _getCategoryColor(String category) {
     switch (category.toLowerCase()) {
       case 'express':
-        return Colors.blue[100]!;
+        return const Color.fromARGB(255, 147, 229, 174);
       case 'regular':
-        return Colors.green[100]!;
+        return const Color.fromARGB(255, 222, 218, 143);
       default:
         return Colors.grey[100]!;
     }
@@ -451,90 +456,84 @@ class LaundryCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: 240, // Sesuaikan dengan kebutuhan
-      child: GestureDetector(
-        onTap: onTap,
-        child: Card(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16.0),
-          ),
-          elevation: 4,
-          child: SingleChildScrollView(
-            // Tambahkan SingleChildScrollView
-            child: Column(
-              mainAxisSize: MainAxisSize.min, // Atur MainAxisSize
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                ClipRRect(
-                  borderRadius:
-                      const BorderRadius.vertical(top: Radius.circular(16.0)),
-                  child: Image.network(
-                    imageUrl,
+    return GestureDetector(
+      onTap: onTap,
+      child: Card(
+        color: Colors.lightBlue[50], // Soft blue for card background
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16.0),
+        ),
+        elevation: 4,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            ClipRRect(
+              borderRadius:
+                  const BorderRadius.vertical(top: Radius.circular(16.0)),
+              child: Image.network(
+                imageUrl,
+                height: 110,
+                width: double.infinity,
+                fit: BoxFit.cover,
+                errorBuilder: (context, error, stackTrace) {
+                  return Container(
+                    color: Colors.grey[200],
                     height: 110,
-                    width: double.infinity,
-                    fit: BoxFit.cover,
-                    errorBuilder: (context, error, stackTrace) {
-                      return Container(
-                        color: Colors.grey[200],
-                        height: 160,
-                        child: const Center(
-                          child: Icon(Icons.broken_image, color: Colors.grey),
-                        ),
-                      );
-                    },
-                    loadingBuilder: (context, child, loadingProgress) {
-                      if (loadingProgress == null) return child;
-                      return Container(
-                        height: 120,
-                        child: Center(
-                          child: CircularProgressIndicator(
-                            value: loadingProgress.expectedTotalBytes != null
-                                ? loadingProgress.cumulativeBytesLoaded /
-                                    (loadingProgress.expectedTotalBytes ?? 1)
-                                : null,
-                          ),
-                        ),
-                      );
-                    },
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        name,
-                        style: const TextStyle(
-                          fontSize: 13,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black87,
-                        ),
+                    child: const Center(
+                      child: Icon(Icons.broken_image, color: Colors.grey),
+                    ),
+                  );
+                },
+                loadingBuilder: (context, child, loadingProgress) {
+                  if (loadingProgress == null) return child;
+                  return Container(
+                    height: 110,
+                    child: Center(
+                      child: CircularProgressIndicator(
+                        value: loadingProgress.expectedTotalBytes != null
+                            ? loadingProgress.cumulativeBytesLoaded /
+                                (loadingProgress.expectedTotalBytes ?? 1)
+                            : null,
                       ),
-                      const SizedBox(height: 2),
-                      Text(
-                        'Rating: $rating',
-                        style: const TextStyle(
-                            fontSize: 12, color: Colors.black87),
-                      ),
-                      const SizedBox(height: 2),
-                      Text(
-                        address,
-                        style: const TextStyle(
-                            fontSize: 12, color: Colors.black87),
-                      ),
-                      const SizedBox(height: 2),
-                      Chip(
-                        label: Text(category),
-                        backgroundColor: _getCategoryColor(category),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
+                    ),
+                  );
+                },
+              ),
             ),
-          ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    name,
+                    style: const TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.bold,
+                      color: Color.fromARGB(221, 0, 75, 116),
+                    ),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    'Rating: $rating',
+                    style: const TextStyle(
+                        fontSize: 12, color: Color.fromARGB(221, 0, 75, 116)),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    address,
+                    style: const TextStyle(
+                        fontSize: 12, color: Color.fromARGB(221, 0, 75, 116)),
+                  ),
+                  const SizedBox(height: 2),
+                  Chip(
+                    label: Text(category),
+                    backgroundColor: _getCategoryColor(category),
+                  ),
+                ],
+              ),
+            ),
+          ],
         ),
       ),
     );
@@ -571,14 +570,6 @@ class _LaundryScreenState extends State<LaundryScreen> {
     });
   }
 
-  // void updateOrderStatus(String orderKey, String newStatus) {
-  //   databaseReference.child(orderKey).update({'status': newStatus}).then((_) {
-  //     print("Status updated successfully!");
-  //   }).catchError((error) {
-  //     print("Failed to update status: $error");
-  //   });
-  // }
-
   String selectedCategory = 'All';
 
   @override
@@ -591,10 +582,18 @@ class _LaundryScreenState extends State<LaundryScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Laundry Services'),
+        title: const Text('Laundry Services',
+            style: TextStyle(
+              color: Color.fromARGB(255, 11, 27, 71),
+              fontWeight: FontWeight.bold,
+            )),
+        backgroundColor: const Color.fromARGB(255, 184, 233, 254),
+        automaticallyImplyLeading: false, // Remove the back arrow
       ),
       body: Column(
         children: [
+          const SizedBox(
+              height: 8), // Space between AppBar and category buttons
           Container(
             height: 50,
             child: ListView(
@@ -611,9 +610,10 @@ class _LaundryScreenState extends State<LaundryScreen> {
               ],
             ),
           ),
+          const SizedBox(height: 8), // Space between category buttons and list
           Expanded(
             child: filteredLaundryItems.isEmpty
-                ? Center(
+                ? const Center(
                     child: Text(
                       'No items found in this category.',
                       style: TextStyle(fontSize: 16),
@@ -634,23 +634,17 @@ class _LaundryScreenState extends State<LaundryScreen> {
                           );
                         },
                         child: Card(
+                          color: Colors.blue[50], // Set card color
+                          margin: const EdgeInsets.symmetric(
+                              vertical: 4, horizontal: 12),
                           child: ListTile(
-                            title: Text('Order ${index + 1}'),
-                            subtitle: Text(
-                                'Total: Rp ${item['totalAmount']} - Status: ${item['status']}'),
-                            trailing: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                // _buildStatusButton(item['status']),
-                                // IconButton(
-                                //   icon: Icon(Icons.edit),
-                                //   onPressed: () {
-                                //     _showStatusUpdateDialog(
-                                //         item['key'], item['status']);
-                                //   },
-                                // ),
-                              ],
-                            ),
+                            contentPadding:
+                                const EdgeInsets.all(8), // Adjust padding
+                            title: Text('Order ${index + 1}',
+                                style: const TextStyle(
+                                    fontWeight: FontWeight.bold)),
+                            subtitle: Text('Total: Rp ${item['totalAmount']}'),
+                            trailing: _buildStatusBadge(item['status']),
                           ),
                         ),
                       );
@@ -670,11 +664,11 @@ class _LaundryScreenState extends State<LaundryScreen> {
         });
       },
       child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        margin: EdgeInsets.symmetric(horizontal: 4),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        margin: const EdgeInsets.symmetric(horizontal: 4),
         decoration: BoxDecoration(
           color: selectedCategory == category
-              ? Colors.blueAccent
+              ? const Color.fromARGB(255, 97, 171, 224)
               : Colors.grey[200],
           borderRadius: BorderRadius.circular(20),
         ),
@@ -683,6 +677,7 @@ class _LaundryScreenState extends State<LaundryScreen> {
             category,
             style: TextStyle(
               color: selectedCategory == category ? Colors.white : Colors.black,
+              fontWeight: FontWeight.bold,
             ),
           ),
         ),
@@ -690,18 +685,18 @@ class _LaundryScreenState extends State<LaundryScreen> {
     );
   }
 
-  Widget _buildStatusButton(String status) {
+  Widget _buildStatusBadge(String status) {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
       decoration: BoxDecoration(
         color: _getStatusColor(status),
         borderRadius: BorderRadius.circular(12),
       ),
       child: Text(
         status,
-        style: TextStyle(
+        style: const TextStyle(
           color: Colors.white,
-          fontSize: 12,
+          fontWeight: FontWeight.bold,
         ),
       ),
     );
@@ -726,93 +721,5 @@ class _LaundryScreenState extends State<LaundryScreen> {
       default:
         return Colors.grey;
     }
-  }
-
-  // void _showStatusUpdateDialog(String orderKey, String currentStatus) {
-  //   showDialog(
-  //     context: context,
-  //     builder: (context) {
-  //       String newStatus = currentStatus;
-  //       return AlertDialog(
-  //         title: Text('Update Status'),
-  //         content: DropdownButton<String>(
-  //           value: newStatus,
-  //           onChanged: (String? value) {
-  //             if (value != null) {
-  //               setState(() {
-  //                 newStatus = value;
-  //               });
-  //             }
-  //           },
-  //           items: <String>[
-  //             'Pickup',
-  //             'Queue',
-  //             'Process',
-  //             'Washing',
-  //             'Dried',
-  //             'Ironed',
-  //             'Done'
-  //           ].map<DropdownMenuItem<String>>((String value) {
-  //             return DropdownMenuItem<String>(
-  //               value: value,
-  //               child: Text(value),
-  //             );
-  //           }).toList(),
-  //         ),
-  //         actions: [
-  //           TextButton(
-  //             child: Text('Cancel'),
-  //             onPressed: () {
-  //               Navigator.of(context).pop();
-  //             },
-  //           ),
-  //           ElevatedButton(
-  //             child: Text('Update'),
-  //             onPressed: () {
-  //               updateOrderStatus(orderKey, newStatus);
-  //               Navigator.of(context).pop();
-  //             },
-  //           ),
-  //         ],
-  //       );
-  //     },
-  //   );
-  // }
-}
-
-class LaundryDetailScreen extends StatelessWidget {
-  final Map<String, dynamic> item;
-
-  const LaundryDetailScreen({required this.item});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Detail Pesanan'),
-      ),
-      body: Padding(
-        padding: EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text('Tanggal: ${item['timestamp']}',
-                style: const TextStyle(fontSize: 18)),
-            const SizedBox(height: 8),
-            Text('Total Harga: Rp ${item['totalAmount']}',
-                style: const TextStyle(fontSize: 18)),
-            const SizedBox(height: 8),
-            Text('Biaya Pengiriman: Rp ${item['deliveryCharge']}',
-                style: const TextStyle(fontSize: 18)),
-            const SizedBox(height: 8),
-            Text('Total Pembayaran: Rp ${item['totalPayable']}',
-                style: const TextStyle(fontSize: 18)),
-            const SizedBox(height: 8),
-            Text('Status: ${item['status']}',
-                style: const TextStyle(fontSize: 18)),
-          ],
-        ),
-      ),
-    );
   }
 }

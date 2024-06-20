@@ -28,7 +28,7 @@ class _RecommendationSectionState extends State<RecommendationSection> {
           List<LaundryShop>? laundries = snapshot.data;
 
           // Batasi jumlah item yang akan ditampilkan menjadi maksimal 4
-          int displayCount = (laundries!.length < 4) ? laundries.length : 4;
+          int displayCount = (laundries!.length < 5) ? laundries.length : 5;
           List<LaundryShop> displayLaundries =
               laundries.sublist(0, displayCount);
 

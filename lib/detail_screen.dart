@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+// ignore: unused_import
 import 'package:flutterdemo/keranjang_belanja.dart';
 
 class OrderItem {
@@ -155,12 +156,24 @@ class _AddToCartDialogState extends State<AddToCartDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Text('Pilih Jenis Laundry'),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      title: Center(
+        child: Text(
+          'Pilih Jenis Laundry',
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 20,
+            color: Colors.lightBlue[800],
+          ),
+        ),
+      ),
       content: SingleChildScrollView(
         child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildLaundryOption('Cuci Kering Saja', 3000),
-            _buildLaundryOption('Cuci Kering Setrika', 5000),
+            _buildLaundryOption('Cuci Kering Saja', 8000), // Updated price
+            _buildLaundryOption('Cuci Kering Setrika', 10000), // Updated price
             SizedBox(height: 16),
             _buildKGSelector(),
           ],
@@ -171,7 +184,10 @@ class _AddToCartDialogState extends State<AddToCartDialog> {
           onPressed: () {
             Navigator.pop(context);
           },
-          child: const Text('Cancel'),
+          child: const Text(
+            'Cancel',
+            style: TextStyle(color: Colors.grey),
+          ),
         ),
         ElevatedButton(
           onPressed: () {
@@ -183,7 +199,13 @@ class _AddToCartDialogState extends State<AddToCartDialog> {
             }
             _addToCart(context);
           },
-          child: const Text('Add to Cart'),
+          child: const Text(
+            'Add to Cart',
+            style: TextStyle(color: Color(0xFF00274D)), // Dark blue color
+          ),
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.lightBlue[300],
+          ),
         ),
       ],
     );
@@ -196,26 +218,40 @@ class _AddToCartDialogState extends State<AddToCartDialog> {
           selectedLaundryOption = title;
         });
       },
-      child: Row(
-        children: [
-          Icon(selectedLaundryOption == title
-              ? Icons.check_circle
-              : Icons.radio_button_unchecked),
-          const SizedBox(width: 8),
-          Text(title),
-          const Spacer(),
-          Text('Rp ${price.toStringAsFixed(0)}'),
-        ],
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 8.0),
+        child: Row(
+          children: [
+            Icon(
+              selectedLaundryOption == title
+                  ? Icons.check_circle
+                  : Icons.radio_button_unchecked,
+              color: Colors.lightBlue[300],
+            ),
+            const SizedBox(width: 8),
+            Expanded(
+              child: Text(
+                title,
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+              ),
+            ),
+            const SizedBox(width: 8),
+            Text(
+              'Rp ${price.toStringAsFixed(0)}',
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            ),
+          ],
+        ),
       ),
     );
   }
 
   Widget _buildKGSelector() {
     return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
         IconButton(
-          icon: Icon(Icons.remove),
+          icon: Icon(Icons.remove, color: Colors.lightBlue[300]),
           onPressed: () {
             setState(() {
               if (selectedKG > 1) {
@@ -224,9 +260,12 @@ class _AddToCartDialogState extends State<AddToCartDialog> {
             });
           },
         ),
-        Text('$selectedKG KG'),
+        Text(
+          '$selectedKG KG',
+          style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+        ),
         IconButton(
-          icon: const Icon(Icons.add),
+          icon: Icon(Icons.add, color: Colors.lightBlue[300]),
           onPressed: () {
             setState(() {
               selectedKG++;
@@ -238,8 +277,9 @@ class _AddToCartDialogState extends State<AddToCartDialog> {
   }
 
   void _addToCart(BuildContext context) {
-    final double pricePerKg =
-        selectedLaundryOption == 'Cuci Kering Saja' ? 3000 : 5000;
+    final double pricePerKg = selectedLaundryOption == 'Cuci Kering Saja'
+        ? 8000
+        : 10000; // Updated prices
     OrderItem newItem = OrderItem(
       laundryOption: selectedLaundryOption,
       kg: selectedKG,
@@ -255,7 +295,16 @@ class _AddToCartDialogState extends State<AddToCartDialog> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('Item Ditambahkan'),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          title: const Text(
+            'Item Ditambahkan',
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 20,
+              color: Colors.lightBlue,
+            ),
+          ),
           content: const SingleChildScrollView(
             child: ListBody(
               children: <Widget>[
@@ -265,7 +314,10 @@ class _AddToCartDialogState extends State<AddToCartDialog> {
           ),
           actions: <Widget>[
             TextButton(
-              child: const Text('OK'),
+              child: const Text(
+                'OK',
+                style: TextStyle(color: Colors.lightBlue),
+              ),
               onPressed: () {
                 Navigator.of(context).pop();
               },

@@ -13,6 +13,7 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
       FirebaseDatabase.instance.ref().child('orders');
 
   List<Map<dynamic, dynamic>> orders = [];
+  List<Map<dynamic, dynamic>> filteredOrders = [];
 
   @override
   void initState() {
@@ -26,9 +27,13 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
       if (data != null) {
         setState(() {
           orders = data.entries
-              .map((entry) =>
-                  {'key': entry.key, ...Map<String, dynamic>.from(entry.value)})
+              .map((entry) => {
+                    'key': entry.key,
+                    'orderNumber': entry.key, // Use the key as order number
+                    ...Map<String, dynamic>.from(entry.value)
+                  })
               .toList();
+          _filterOrders(selectedCategory);
         });
       }
     });
@@ -44,20 +49,48 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
 
   String selectedCategory = 'All';
 
+  void _filterOrders(String category) {
+    setState(() {
+      selectedCategory = category;
+      if (category == 'All') {
+        filteredOrders = orders;
+      } else {
+        filteredOrders =
+            orders.where((item) => item['status'] == category).toList();
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    List<Map> filteredOrders = selectedCategory == 'All'
-        ? orders
-        : orders.where((item) => item['status'] == selectedCategory).toList();
-
     final User? user = FirebaseAuth.instance.currentUser;
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Admin Home'),
+        backgroundColor: Color.fromARGB(255, 195, 237, 255),
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back,
+              color: Color.fromARGB(
+                  162, 6, 37, 83)), // Set arrow icon color to white
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+        ),
+        title: const Text(
+          'Admin Home',
+          style: TextStyle(
+            color: Color.fromARGB(162, 6, 37, 83), // Set text color to white
+            fontWeight: FontWeight.bold, // Make text bold
+          ),
+        ),
         actions: [
           IconButton(
-            icon: Icon(Icons.account_circle),
+            icon: Icon(
+              Icons.account_circle,
+              size: 40,
+              color: const Color.fromARGB(
+                  162, 6, 37, 83), // Corrected usage of Color.fromARGB
+            ),
             onPressed: () {
               if (user != null) {
                 Navigator.push(
@@ -73,6 +106,7 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
       ),
       body: Column(
         children: [
+          SizedBox(height: 10), // Add space between AppBar and buttons
           Container(
             height: 50,
             child: ListView(
@@ -89,6 +123,7 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
               ],
             ),
           ),
+          SizedBox(height: 10), // Add space between buttons and content
           Expanded(
             child: filteredOrders.isEmpty
                 ? Center(
@@ -102,20 +137,32 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
                     itemBuilder: (context, index) {
                       final order = filteredOrders[index];
                       return Card(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(15.0),
+                        ),
+                        margin: EdgeInsets.symmetric(
+                            vertical: 5, horizontal: 10), // Reduce margins
+                        color: Color.fromARGB(255, 195, 237,
+                            255), // Light blue color for the card
+                        elevation:
+                            3, // Reduce elevation to make the card smaller
                         child: ListTile(
-                          title: Container(
-                            color: Colors.blue,
-                            child: Text(
-                              'Order ${index + 1}',
-                              style: TextStyle(
-                                color: Colors.white,
-                                decoration: TextDecoration.underline,
-                              ),
+                          contentPadding: EdgeInsets.symmetric(
+                              vertical: 5, horizontal: 10), // Reduce padding
+                          title: Text(
+                            'Order ${orders.indexWhere((element) => element['key'] == order['key']) + 1}', // Use the original order number
+                            style: TextStyle(
+                              color: Color.fromARGB(255, 4, 23, 47),
+                              fontSize: 16, // Reduce font size
+                              fontWeight: FontWeight.bold,
                             ),
                           ),
                           subtitle: Text(
                             'Total: Rp ${order['totalPayable']} - Status: ${order['status']}',
-                            style: TextStyle(color: Colors.white),
+                            style: TextStyle(
+                              color: Color.fromARGB(255, 0, 48, 130),
+                              fontSize: 14, // Reduce font size
+                            ),
                           ),
                           trailing: Row(
                             mainAxisSize: MainAxisSize.min,
@@ -123,6 +170,7 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
                               _buildStatusButton(order['status']),
                               IconButton(
                                 icon: Icon(Icons.edit),
+                                color: Colors.grey[600],
                                 onPressed: () {
                                   _showUpdateStatusDialog(
                                       order['key'], order['status']);
@@ -131,7 +179,6 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
                             ],
                           ),
                         ),
-                        color: Colors.black, // Background card color
                       );
                     },
                   ),
@@ -144,13 +191,12 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
   Widget _buildCategoryItem(String category) {
     return GestureDetector(
       onTap: () {
-        setState(() {
-          selectedCategory = category;
-        });
+        _filterOrders(category);
       },
       child: Container(
         padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        margin: EdgeInsets.symmetric(horizontal: 4),
+        margin: EdgeInsets.symmetric(
+            horizontal: 8), // Increase margin between buttons
         decoration: BoxDecoration(
           color: selectedCategory == category
               ? Colors.blueAccent
@@ -208,35 +254,42 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
   }
 
   void _showUpdateStatusDialog(String orderKey, String currentStatus) {
+    String newStatus = currentStatus;
     showDialog(
       context: context,
       builder: (context) {
-        String newStatus = currentStatus;
         return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(15.0),
+          ),
           title: Text('Update Status'),
-          content: DropdownButton<String>(
-            value: newStatus,
-            onChanged: (String? value) {
-              if (value != null) {
-                setState(() {
-                  newStatus = value;
-                });
-              }
-            },
-            items: <String>[
-              'Pickup',
-              'Queue',
-              'Process',
-              'Washing',
-              'Dried',
-              'Ironed',
-              'Done'
-            ].map<DropdownMenuItem<String>>((String value) {
-              return DropdownMenuItem<String>(
-                value: value,
-                child: Text(value),
+          content: StatefulBuilder(
+            builder: (BuildContext context, StateSetter setState) {
+              return DropdownButton<String>(
+                value: newStatus,
+                onChanged: (String? value) {
+                  if (value != null) {
+                    setState(() {
+                      newStatus = value;
+                    });
+                  }
+                },
+                items: <String>[
+                  'Pickup',
+                  'Queue',
+                  'Process',
+                  'Washing',
+                  'Dried',
+                  'Ironed',
+                  'Done'
+                ].map<DropdownMenuItem<String>>((String value) {
+                  return DropdownMenuItem<String>(
+                    value: value,
+                    child: Text(value),
+                  );
+                }).toList(),
               );
-            }).toList(),
+            },
           ),
           actions: [
             TextButton(

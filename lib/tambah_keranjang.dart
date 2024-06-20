@@ -1,8 +1,4 @@
 import 'package:flutter/material.dart';
-// ignore: unused_import
-import 'package:flutterdemo/detail_screen.dart';
-// ignore: unused_import
-import 'package:flutterdemo/keranjang_belanja.dart';
 
 class CartItem {
   final String laundryOption;
@@ -103,6 +99,8 @@ class _AddToCartScreenState extends State<AddToCartScreen> {
                       kg: _kg!,
                       price: _price! * _kg!,
                     ));
+                    print(
+                        'Item added to cart: $_laundryOption, $_kg, ${_price! * _kg!}');
                     Navigator.pop(context);
                   }
                 },

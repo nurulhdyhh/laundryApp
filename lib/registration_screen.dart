@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
+// ignore: unused_import
+import 'package:firebase_core/firebase_core.dart';
 import 'login_screen.dart'; // Import the login screen
 
 class RegistrationScreen extends StatefulWidget {
@@ -54,12 +56,30 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Color.fromARGB(255, 102, 182, 213),
+        elevation: 0,
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
+        title: Text(
+          'Create your account',
+          style: TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ),
       body: SingleChildScrollView(
         child: Container(
           height: MediaQuery.of(context).size.height,
           decoration: BoxDecoration(
             gradient: LinearGradient(
-              colors: [Color(0xFF00BFA5), Color(0xFF1DE9B6)],
+              colors: [
+                Color.fromARGB(255, 102, 182, 213),
+                Color.fromARGB(255, 3, 169, 244),
+              ],
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
             ),
@@ -70,26 +90,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Align(
-                  alignment: Alignment.topLeft,
-                  child: IconButton(
-                    icon: Icon(Icons.arrow_back, color: Colors.white),
-                    onPressed: () => Navigator.of(context).pop(),
-                  ),
-                ),
-                SizedBox(height: 60),
-                Align(
-                  alignment: Alignment.topLeft,
-                  child: Text(
-                    'Create your account',
-                    style: TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                    ),
-                  ),
-                ),
-                SizedBox(height: 40),
+                SizedBox(height: 60), // Add spacing from the app bar
                 Form(
                   key: _formKey,
                   child: Column(
@@ -103,6 +104,13 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                         decoration: InputDecoration(
                           hintText: 'Enter your username',
                           labelText: 'Username',
+                          filled: true,
+                          fillColor: Colors.white,
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          contentPadding: EdgeInsets.symmetric(
+                              horizontal: 16, vertical: 12),
                         ),
                         validator: (value) {
                           if (value == null || value.isEmpty) {
@@ -125,6 +133,13 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                         decoration: InputDecoration(
                           hintText: 'Enter your email address',
                           labelText: 'Email',
+                          filled: true,
+                          fillColor: Colors.white,
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          contentPadding: EdgeInsets.symmetric(
+                              horizontal: 16, vertical: 12),
                         ),
                         validator: (value) {
                           if (value == null || value.isEmpty) {
@@ -147,6 +162,13 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                         decoration: InputDecoration(
                           hintText: 'Enter your password',
                           labelText: 'Password',
+                          filled: true,
+                          fillColor: Colors.white,
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          contentPadding: EdgeInsets.symmetric(
+                              horizontal: 16, vertical: 12),
                           suffixIcon: IconButton(
                             icon: Icon(
                               _obscureText
@@ -195,13 +217,14 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                             borderRadius: BorderRadius.circular(10),
                           ),
                           labelText: 'Role',
+                          contentPadding: EdgeInsets.symmetric(
+                              horizontal: 16, vertical: 12),
                         ),
                       ),
                       SizedBox(height: 30),
                       ElevatedButton(
                         onPressed: _register,
                         style: ElevatedButton.styleFrom(
-                          foregroundColor: Color(0xFF00BFA5),
                           backgroundColor: Colors.white,
                           padding: EdgeInsets.symmetric(
                               horizontal: 50, vertical: 15),
@@ -213,7 +236,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                           'Register',
                           style: TextStyle(
                             fontSize: 18,
-                            color: Color(0xFF00BFA5),
+                            color: Color.fromARGB(255, 102, 182, 213),
                           ),
                         ),
                       ),

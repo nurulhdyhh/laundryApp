@@ -8,6 +8,7 @@ class DetailedProfileScreen extends StatelessWidget {
   final String phoneNumber;
   final String address;
   final String githubUrl;
+  final String imagePath; // Add imagePath parameter
 
   DetailedProfileScreen({
     required this.name,
@@ -16,6 +17,7 @@ class DetailedProfileScreen extends StatelessWidget {
     required this.phoneNumber,
     required this.address,
     required this.githubUrl,
+    required this.imagePath, // Initialize imagePath
   });
 
   @override
@@ -35,8 +37,8 @@ class DetailedProfileScreen extends StatelessWidget {
                   children: [
                     CircleAvatar(
                       radius: 40,
-                      backgroundImage: AssetImage(
-                          'assets/fotonurul.jpg'), // Update with your profile image asset
+                      backgroundImage:
+                          AssetImage(imagePath), // Use the imagePath
                     ),
                     SizedBox(height: 8),
                     Text(
